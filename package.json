@@ -1,7 +1,7 @@
 {
   "name": "variant-type",
   "version": "0.0.1",
-  "description": "Variants let you define your own types that can be switched on, similar to enums in C-style languages.",
+  "description": "A Variant is a data structure that can be used to represent any other data type.",
   "main": "dist/variant-type.js",
   "module": "dist/variant-type.m.js",
   "source": "index.js",
@@ -23,7 +23,11 @@
   "keywords": [
     "variant",
     "pattern-matching",
-    "type"
+    "type",
+    "tagged",
+    "union",
+    "choice",
+    "sum"
   ],
   "author": "Adrian Unger",
   "license": "ISC",

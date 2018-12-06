@@ -1,34 +1,38 @@
-# check-arg-types
+# variant-type
 
-[![Build Status](https://travis-ci.org/staydecent/check-arg-types.svg?branch=master)](https://travis-ci.org/staydecent/check-arg-types)
+A Variant is a data structure ([tagged union](https://en.wikipedia.org/wiki/Tagged_union)) that can be used to represent any other data type. You define the various potential types and the variant can only represent one of those types at any one time.
 
-Pass in `arguments` and an array of the expected types (as string descriptions) and throw if they don't match. Simple to adopt and only ~320 bytes.
+A good use for this, is representing parts of your React/Redux app state.
 
 ```javascript
-function test(a, b, c) {
-  check(arguments, ['string', 'number', 'boolean']);
-  return a + b + c;
+const Any = () => true
+
+const Request = Variant({
+  Unloaded: [],
+  Loading: [],
+  Loaded: [Any],
+  Failed: [Error] // might have to make this `any`, given that JS can throw non-Errors…
+})
+
+// ...
+
+componentDidMount () {
+  setState({request: Request.Loading})
+
+  fetchSomething
+    .then((results) => setState({request: Request.Loaded(results)}))
+    .catch(e => setState({request: Request.Failed(e)}))
 }
 
-test('hey', 1, 'true'); // Uncaught TypeError: Expected 'boolean' given 'string' for argument at index 2
-```
+// ...
 
-### Allow multiple types
-
-```javascript
-// `a` can be a string or number
-function example(a, b) {
-  check(arguments, [['string', 'number'], 'number']);
-  return a + b;
-}
-```
-
-### Can skip checking for some arguments
-
-```javascript
-// `b` can be any type
-function example(a, b, c) {
-  check(arguments, ['string', '-any', 'numbers');
-  return a + b + c;
+render () {
+  return Request.case({
+    Unloaded: () => 'Nothing to see here.',
+    Loading: () => 'Please be patient.',
+    Loaded: (data) => `Got this data: ${data}`,
+    Failed: (error) => `Sorry: ${error}`,
+    _: () => 'Uh, how did you even get here?'
+  })
 }
 ```
