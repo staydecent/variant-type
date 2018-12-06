@@ -11,7 +11,7 @@ const Request = Variant({
   Unloaded: [],
   Loading: [],
   Loaded: [Any],
-  Failed: [Error] // might have to make this `any`, given that JS can throw non-Errors…
+  Failed: [Error]
 })
 
 // ...
@@ -31,8 +31,7 @@ render () {
     Unloaded: () => 'Nothing to see here.',
     Loading: () => 'Please be patient.',
     Loaded: (data) => `Got this data: ${data}`,
-    Failed: (error) => `Sorry: ${error}`,
-    _: () => 'Uh, how did you even get here?'
+    Failed: (error) => `Sorry: ${error}`
   })
 }
 ```
