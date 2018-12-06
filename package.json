@@ -1,0 +1,49 @@
+{
+  "name": "variant-type",
+  "version": "0.0.1",
+  "description": "Variants let you define your own types that can be switched on, similar to enums in C-style languages.",
+  "main": "dist/variant-type.js",
+  "module": "dist/variant-type.m.js",
+  "source": "index.js",
+  "scripts": {
+    "build": "microbundle",
+    "prepublishOnly": "npm run build",
+    "pretest": "npm run build && standard --verbose | snazzy",
+    "test": "tape test/*.js | faucet"
+  },
+  "standard": {
+    "ignore": [
+      "dist"
+    ]
+  },
+  "files": [
+    "dist",
+    "index.js"
+  ],
+  "keywords": [
+    "variant",
+    "pattern-matching",
+    "type"
+  ],
+  "author": "Adrian Unger",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/staydecent/variant-type/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/staydecent/variant-type.git"
+  },
+  "homepage": "https://github.com/staydecent/variant-type#readme",
+  "devDependencies": {
+    "atom": "1.2.3",
+    "faucet": "0.0.1",
+    "microbundle": "0.5.1",
+    "snazzy": "7.0.0",
+    "standard": "11.0.1",
+    "tape": "4.0.3"
+  },
+  "dependencies": {
+    "check-arg-types": "1.1.2"
+  }
+}
