@@ -11,29 +11,7 @@ const Kittens = Variant({
   Failed: [Error] // might have to make this `any`, given that JS can throw non-Errors…
 })
 
-// action types
-const FETCHING_KITTENS = 'FETCHING_KITTENS'
-const GOT_KITTENS = 'GOT_KITTENS'
-const FAILED_KITTENS = 'FAILED_KITTENS'
-
-// action creators
-const fetchingKittens = () => ({type: FETCHING_KITTENS})
-const gotKittens = (kittens) => ({type: GOT_KITTENS, payload: kittens})
-const failedKittens = (error) => ({type: FAILED_KITTENS, error})
-
-const reducer = (action, oldState = {}) => {
-  switch (action.type) {
-    case FETCHING_KITTENS:
-      return ({...oldState, kittens: Kittens.Loading})
-    case GOT_KITTENS:
-      return ({...oldState, kittens: Kittens.Loaded(action.payload)})
-    case FAILED_KITTENS: return ({...oldState, kittens: Kittens.Failed(action.error)})
-    default: return oldState
-  }
-}
-
-createVariantReducer({Kittens})
-
+const {actions, reducer} = createVariantReducer({Kittens})
 const store = atom(reducer, {kittens: Kittens.Unloaded})
 
 // This is how you would decide what to render in your React app
@@ -55,8 +33,8 @@ debugKittens()
 
 store.subscribe(debugKittens)
 
-store.dispatch(fetchingKittens())
+store.dispatch(actions.isLoading())
 
-store.dispatch(gotKittens(['Whiskers', 'Ferdinand']))
+store.dispatch(actions.isLoaded(['Whiskers', 'Ferdinand']))
 
-store.dispatch(failedKittens(Error('oh noes!')))
+store.dispatch(actions.isFailed(Error('oh noes!')))

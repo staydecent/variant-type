@@ -1,24 +1,3 @@
-// // action types
-// const FETCHING_KITTENS = 'FETCHING_KITTENS'
-// const GOT_KITTENS = 'GOT_KITTENS'
-// const FAILED_KITTENS = 'FAILED_KITTENS'
-
-// // action creators
-// const fetchingKittens = () => ({type: FETCHING_KITTENS})
-// const gotKittens = (kittens) => ({type: GOT_KITTENS, payload: kittens})
-// const failedKittens = (error) => ({type: FAILED_KITTENS, error})
-
-// const reducer = (action, oldState = {}) => {
-//   switch (action.type) {
-//     case FETCHING_KITTENS:
-//       return ({...oldState, kittens: Variant.Loading})
-//     case GOT_KITTENS:
-//       return ({...oldState, kittens: Variant.Loaded(action.payload)})
-//     case FAILED_KITTENS: return ({...oldState, kittens: Variant.Failed(action.error)})
-//     default: return oldState
-//   }
-// }
-
 /* globals define */
 (function (root, factory) {
   'use strict'
@@ -67,28 +46,48 @@
     return ret
   }
 
-  function createActions (actionTypes, name, store) {
+  function createActions (actionTypes, name) {
     const actions = {}
     actionTypes.forEach(type => {
       actions[toFnName(type).replace(name, 'is')] = function () {
         const args = Array.prototype.slice.call(arguments)
-        store.dispatch({
-          type: type,
-          payload: {args}
-        })
+        return {type, payload: {args}}
       }
     })
     return actions
   }
 
-  return function createVariantReducer (wrapper, store) {
+  function createReducer (actionTypes, Variant, name) {
+    const reduce = {}
+    actionTypes.forEach(type => {
+      reduce[type] = function (action, state) {
+        const {type, payload} = action
+        const fnName = toFnName(type).replace(name, '')
+        if (payload.args.length) {
+          state[name] = Variant[fnName].apply(Variant, payload.args)
+        } else {
+          state[name] = Variant[fnName]
+        }
+        return state
+      }
+    })
+    return function reducer (action, state) {
+      if (reduce[action.type] != null) {
+        return reduce[action.type](action, state)
+      }
+      return state
+    }
+  }
+
+  return function createVariantReducer (wrapper) {
     const name = Object.keys(wrapper)[0]
     const nameUpper = toConst(name)
     const Variant = wrapper[name]
     const proto = Object.getPrototypeOf(Variant)
     const types = Object.keys(proto._types)
     const actionTypes = types.map(s => nameUpper + '_' + toConst(s))
-    const actions = createActions(actionTypes, name.toLowerCase(), store)
-    console.log({name, actions})
+    const actions = createActions(actionTypes, name.toLowerCase())
+    const reducer = createReducer(actionTypes, Variant, name.toLowerCase())
+    return {actions, reducer}
   }
 }))
