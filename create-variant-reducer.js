@@ -46,18 +46,21 @@
     return ret
   }
 
-  function createActions (actionTypes, name) {
+  function createActions (actionTypes, name, store) {
     const actions = {}
     actionTypes.forEach(type => {
       actions[toFnName(type).replace(name, 'is')] = function () {
         const args = Array.prototype.slice.call(arguments)
-        return {type, payload: {args}}
+        const action = {type, payload: {args}}
+        return store != null
+          ? store.dispatch(action)
+          : action
       }
     })
     return actions
   }
 
-  function createReducer (actionTypes, Variant, name) {
+  function createReducer (actionTypes, name, Variant) {
     const reduce = {}
     actionTypes.forEach(type => {
       reduce[type] = function (action, state) {
@@ -79,15 +82,15 @@
     }
   }
 
-  return function createVariantReducer (wrapper) {
+  return function createVariantReducer (wrapper, store) {
     const name = Object.keys(wrapper)[0]
     const nameUpper = toConst(name)
     const Variant = wrapper[name]
     const proto = Object.getPrototypeOf(Variant)
     const types = Object.keys(proto._types)
     const actionTypes = types.map(s => nameUpper + '_' + toConst(s))
-    const actions = createActions(actionTypes, name.toLowerCase())
-    const reducer = createReducer(actionTypes, Variant, name.toLowerCase())
+    const actions = createActions(actionTypes, name.toLowerCase(), store)
+    const reducer = createReducer(actionTypes, name.toLowerCase(), Variant)
     return {actions, reducer}
   }
 }))

@@ -11,8 +11,9 @@ const Kittens = Variant({
   Failed: [Error] // might have to make this `any`, given that JS can throw non-Errors…
 })
 
-const {actions, reducer} = createVariantReducer({Kittens})
-const store = atom(reducer, {kittens: Kittens.Unloaded})
+const store = atom([], {kittens: Kittens.Unloaded})
+const {actions, reducer} = createVariantReducer({Kittens}, store)
+store.addReducer(reducer)
 
 // This is how you would decide what to render in your React app
 const renderRequest = Kittens.case({
@@ -33,8 +34,8 @@ debugKittens()
 
 store.subscribe(debugKittens)
 
-store.dispatch(actions.isLoading())
+actions.isLoading()
 
-store.dispatch(actions.isLoaded(['Whiskers', 'Ferdinand']))
+actions.isLoaded(['Whiskers', 'Ferdinand'])
 
-store.dispatch(actions.isFailed(Error('oh noes!')))
+actions.isFailed(Error('oh noes!'))
