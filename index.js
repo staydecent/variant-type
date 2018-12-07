@@ -1,5 +1,7 @@
 import check from 'check-arg-types'
 
+const toType = check.prototype.toType
+
 export default function VariantFactory (types) {
   check(arguments, ['object'])
 
@@ -10,9 +12,27 @@ export default function VariantFactory (types) {
 
   Variant.prototype._types = types
 
-  typeNames.forEach(k => {
-    Variant.prototype[k] = function () {
-      return caseFns[k].apply(this, arguments)
+  typeNames.forEach(key => {
+    Variant.prototype[key] = function () {
+      const args = Array.prototype.slice.call(arguments)
+      if (args.length !== types[key].length) {
+        const msg = 'Arguments did not match for ' + key + ': Expected ' + types[key].length + ', Received ' + args.length
+        throw new E(msg, types[key], args)
+      }
+
+      const badArg = args.findIndex((val, idx) =>
+        (types[key][idx] === Boolean)
+          ? toType(val) !== 'boolean'
+          : !types[key][idx](val)
+      )
+      if (badArg > -1) {
+        const msg = 'Bad argument at index ' + badArg + ': Expected ' + types[key][badArg] + ', Received "' + args[badArg] + '"'
+        throw new E(msg, types[key], args)
+      }
+
+      return caseFns != null
+        ? caseFns[key].apply(this, arguments)
+        : args
     }
   })
 
@@ -28,15 +48,10 @@ export default function VariantFactory (types) {
         const key = caseKey.prototype._name
         if (arguments.length > 0) {
           const args = Array.prototype.slice.call(arguments)
-          if (args.length !== types[key].length) {
-            const msg = 'Arguments did not match for ' + key + ': Expected ' + types[key].length + ', Received: ' + args.length
-            throw new E(msg, types[key], args)
-          }
-          return function () {
-            return cases[key].apply(this, args)
-          }
+          return function () { return cases[key].apply(this, args) }
+        } else {
+          return cases[key](arguments)
         }
-        return cases[key](arguments)
       }
       this[caseKey].prototype._name = caseKey
     })
