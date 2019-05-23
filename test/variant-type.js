@@ -18,7 +18,7 @@ test('constructors create object with fields in array', function (t) {
 })
 
 test('throws if field value does not pass validator', function (t) {
-  var Point = Variant({Point: [isNumber, isNumber]})
+  var Point = Variant({Point: [Number, Number]})
   t.throws(function () {
     Point.Point('lol', 10)
   })

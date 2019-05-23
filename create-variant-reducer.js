@@ -51,7 +51,7 @@
     actionTypes.forEach(type => {
       actions[toFnName(type).replace(name, 'is')] = function () {
         const args = Array.prototype.slice.call(arguments)
-        const action = {type, payload: {args}}
+        const action = { type, payload: { args } }
         return store != null
           ? store.dispatch(action)
           : action
@@ -64,7 +64,7 @@
     const reduce = {}
     actionTypes.forEach(type => {
       reduce[type] = function (action, state) {
-        const {type, payload} = action
+        const { type, payload } = action
         const fnName = toFnName(type).replace(name, '')
         if (payload.args.length) {
           state[name] = Variant[fnName].apply(Variant, payload.args)
@@ -91,6 +91,6 @@
     const actionTypes = types.map(s => nameUpper + '_' + toConst(s))
     const actions = createActions(actionTypes, name.toLowerCase(), store)
     const reducer = createReducer(actionTypes, name.toLowerCase(), Variant)
-    return {actions, reducer}
+    return { actions, reducer }
   }
 }))
