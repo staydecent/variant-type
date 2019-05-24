@@ -1,6 +1,7 @@
 import check from 'check-arg-types'
 
 const toType = check.prototype.toType
+const DEFAULT_HANDLER = '_'
 
 function getTestFunc (f) {
   const str = f.toString()
@@ -13,13 +14,17 @@ function getTestFunc (f) {
 
 export default function VariantFactory (types) {
   const Variant = {}
-  const typeNames = Object.keys(types).concat(['_'])
+  const typeNames = Object.keys(types).concat([DEFAULT_HANDLER])
 
   if (typeNames.includes('case')) {
     throw new Error('`case` is a reserved key!')
   }
 
   const checkArgs = (args, caseKey) => {
+    if (caseKey === DEFAULT_HANDLER) {
+      return
+    }
+
     const len = types[caseKey].length
 
     if (args.length !== len) {
@@ -64,7 +69,13 @@ export default function VariantFactory (types) {
       const args = typeof getType === 'function'
         ? getType()
         : getType
-      return Cases[args.type].apply(null, args)
+      const handler = Cases.hasOwnProperty(args.type)
+        ? Cases[args.type]
+        : Cases[DEFAULT_HANDLER]
+      if (!handler) {
+        throw new Error('No handler found for case: ' + args.type)
+      }
+      return handler.apply(null, args)
     }
   }
 
