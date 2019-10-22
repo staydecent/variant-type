@@ -15,7 +15,7 @@
   function toConst (str) {
     let ret = ''
     let prevLowercase = false
-    for (let s of str) {
+    for (const s of str) {
       const isUppercase = s.toUpperCase() === s
       if (isUppercase && prevLowercase) {
         ret += '_'
@@ -30,7 +30,7 @@
   function toFnName (str) {
     let ret = ''
     let prevUnderscore = false
-    for (let s of str) {
+    for (const s of str) {
       const isUnderscore = s === '_'
       if (isUnderscore) {
         prevUnderscore = true

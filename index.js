@@ -1,6 +1,7 @@
 import check from 'check-arg-types'
 
 const toType = check.prototype.toType
+const hasProp = Object.prototype.hasOwnProperty
 const DEFAULT_HANDLER = '_'
 
 function getTestFunc (f) {
@@ -26,7 +27,6 @@ export default function VariantFactory (types) {
     }
 
     const len = types[caseKey].length
-
     if (args.length !== len) {
       throw new Error('Arguments did not match for ' + caseKey + ': Expected ' + len + ', Received ' + args.length)
     }
@@ -69,7 +69,7 @@ export default function VariantFactory (types) {
       const args = typeof getType === 'function'
         ? getType()
         : getType
-      const handler = Cases.hasOwnProperty(args.type)
+      const handler = hasProp.call(Cases, args.type)
         ? Cases[args.type]
         : Cases[DEFAULT_HANDLER]
       if (!handler) {
