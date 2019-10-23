@@ -49,7 +49,7 @@ export default function VariantFactory (types) {
     }
   })
 
-  Variant.case = function (cases) {
+  function caseFunc (cases) {
     const Cases = {}
     const caseKeys = Object.keys(cases)
 
@@ -78,6 +78,9 @@ export default function VariantFactory (types) {
       return handler.apply(null, args)
     }
   }
+
+  Variant.case = caseFunc
+  Variant.on = caseFunc
 
   return Object.freeze(Variant)
 }

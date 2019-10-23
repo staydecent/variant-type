@@ -2,6 +2,8 @@ var Variant = require('../dist/variant-type')
 var test = require('tape')
 
 function isNumber (n) { return typeof n === 'number' }
+function isFalsy (n) { return !n }
+function isTruthy (n) { return !!n }
 
 test('returns type with constructors', function (t) {
   var Point = Variant({ Point: [isNumber, isNumber] })
@@ -50,5 +52,27 @@ test('throws on boolean with primitive constructors', function (t) {
   t.throws(function () {
     Exists.Exists('12')
   })
+  t.end()
+})
+
+test('case function returns from correct type', function (t) {
+  var Choice = Variant({
+    No: [isFalsy],
+    Yes: [isTruthy]
+  })
+  var checkCase = Choice.case({ No: () => 'No', Yes: () => 'Yes' })
+  t.equal(checkCase(Choice.No(0)), 'No')
+  t.equal(checkCase(Choice.Yes('a')), 'Yes')
+  t.end()
+})
+
+test('on function returns from correct type', function (t) {
+  var Choice = Variant({
+    No: [isFalsy],
+    Yes: [isTruthy]
+  })
+  var checkCase = Choice.on({ No: () => 'No', Yes: () => 'Yes' })
+  t.equal(checkCase(Choice.No(0)), 'No')
+  t.equal(checkCase(Choice.Yes('a')), 'Yes')
   t.end()
 })
