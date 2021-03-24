@@ -4,22 +4,18 @@
   "description": "A Variant is a data structure that can be used to represent any other data type.",
   "main": "dist/variant-type.js",
   "module": "dist/variant-type.m.js",
-  "source": "index.js",
+  "source": "src/variant-type.js",
   "scripts": {
-    "build": "microbundle --compress=false",
+    "prebuild": "prettier --write src/ test/",
+    "build": "microbundle --no-compress",
     "prepublishOnly": "npm run build",
-    "pretest": "npm run build && standard --verbose | snazzy",
+    "pretest": "npm run build",
     "test": "tape test/*.js | tap-min"
-  },
-  "standard": {
-    "ignore": [
-      "dist",
-      "test"
-    ]
   },
   "files": [
     "dist",
-    "index.js"
+    "src",
+    "create-variant-reducer.js"
   ],
   "keywords": [
     "variant",
@@ -41,14 +37,13 @@
   },
   "homepage": "https://github.com/staydecent/variant-type#readme",
   "devDependencies": {
-    "atom": "1.2.3",
-    "microbundle": "0.11.0",
-    "snazzy": "8.0.0",
-    "standard": "14.3.1",
+    "atom": "1.4.1",
+    "microbundle": "0.13.0",
+    "prettier": "2.2.1",
     "tap-min": "2.0.0",
-    "tape": "4.11.0"
+    "tape": "5.2.2"
   },
   "dependencies": {
-    "check-arg-types": "1.1.2"
+    "check-arg-types": "2.0.0"
   }
 }
