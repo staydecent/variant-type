@@ -33,7 +33,7 @@ export default function VariantFactory(types) {
           ": Expected " +
           len +
           ", Received " +
-          args.length
+          args.length,
       );
     }
 
@@ -66,7 +66,7 @@ export default function VariantFactory(types) {
             caseKey +
             "` not in [" +
             typeNames.join(", ") +
-            "]"
+            "]",
         );
       }
 
